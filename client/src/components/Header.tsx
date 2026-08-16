@@ -43,226 +43,36 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full">
-
-
-
-      {/* ── Top ribbon ── */}
-      <div className="hidden md:block bg-[#0d2137] border-b border-white/10">
+      {/* ── Single Unified Navbar ── */}
+      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-end gap-1 h-11">
-            <div className="flex items-center gap-1">
+          <div className="flex h-16 items-center justify-between gap-4">
 
-            {/* I'm a Candidate */}
-            <div
-              className="relative flex items-center h-11"
-              onMouseEnter={handleJobSeekersEnter}
-              onMouseLeave={handleJobSeekersLeave}
-            >
-              <button
-                className={`flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider px-5 h-7 rounded-full transition-all ${
-                  jobSeekersOpen
-                    ? "bg-sky-400 text-white"
-                    : "bg-sky-500 text-white hover:bg-sky-400"
-                }`}
-                data-testid="button-job-seekers-menu"
-              >
-                <User className="h-3.5 w-3.5" />
-                I'm a Candidate
-                <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${jobSeekersOpen ? "rotate-180" : ""}`} />
-              </button>
-              {jobSeekersOpen && (
-                <div className="absolute top-full left-0 pt-1 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                  <div className="w-72 bg-card border border-border rounded-xl shadow-2xl overflow-hidden py-2">
-                    <Link href="/jobs" data-testid="link-browse-jobs" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                        <Search className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Search Jobs</p>
-                        <p className="text-xs text-muted-foreground">Find your next opportunity</p>
-                      </div>
-                    </Link>
-                    <Link href="/submit-cv" data-testid="link-submit-cv-new" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                        <FileText className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Submit CV</p>
-                        <p className="text-xs text-muted-foreground">Let recruiters find you</p>
-                      </div>
-                    </Link>
-                    <Link href="/career-advice" data-testid="link-career-advice" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                        <Lightbulb className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Career Advice</p>
-                        <p className="text-xs text-muted-foreground">Expert tips for your journey</p>
-                      </div>
-                    </Link>
-
-                    <div className="my-1.5 border-t border-border" />
-
-                    <Link href="/jobseeker-auth" data-testid="link-candidate-login" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400">
-                        <LogIn className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Login / Register Free</p>
-                        <p className="text-xs text-muted-foreground">Access or create your candidate account</p>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* I'm an Employer */}
-            <div
-              className="relative flex items-center h-11"
-              onMouseEnter={handleEmployersEnter}
-              onMouseLeave={handleEmployersLeave}
-            >
-              <button
-                className={`flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider px-5 h-7 rounded-full border transition-all ${
-                  employersOpen
-                    ? "bg-white/15 border-white/50 text-white"
-                    : "border-white/30 text-white/90 hover:bg-white/10 hover:border-white/50"
-                }`}
-                data-testid="button-employers-menu"
-              >
-                <Building2 className="h-3.5 w-3.5" />
-                I'm an Employer
-                <span className="ml-1 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide rounded-sm bg-emerald-500 text-white leading-none">NEW</span>
-                <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${employersOpen ? "rotate-180" : ""}`} />
-              </button>
-              {employersOpen && (
-                <div className="absolute top-full left-0 pt-1 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                  <div className="w-80 bg-card border border-border rounded-xl shadow-2xl overflow-hidden py-2">
-                    <Link href="/employers" data-testid="link-our-services" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                        <ShieldCheck className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Our Services</p>
-                        <p className="text-xs text-muted-foreground">Scalable staffing solutions</p>
-                      </div>
-                    </Link>
-                    <Link href="/upload-job-description" data-testid="link-post-job" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                        <FileText className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Upload Job Description</p>
-                        <p className="text-xs text-muted-foreground">Hire top talent fast</p>
-                      </div>
-                    </Link>
-                    <Link href="/industries" data-testid="link-industries-we-serve" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                        <Globe className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Industries We Serve</p>
-                        <p className="text-xs text-muted-foreground">Expertise across sectors</p>
-                      </div>
-                    </Link>
-
-                    <div className="my-1.5 border-t border-border" />
-
-                    <Link href="/vendor-registration" data-testid="link-become-partner" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                        <Handshake className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Become a Partner</p>
-                        <p className="text-xs text-muted-foreground">Vendor partnership program</p>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* ATS + CRM Login dropdown — recruiter workspace only */}
-            <div
-              className="relative flex items-center h-11"
-              onMouseEnter={() => { if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current); setLoginOpen(true); }}
-              onMouseLeave={() => { loginTimeoutRef.current = setTimeout(() => setLoginOpen(false), 150); }}
-            >
-              <Link
-                href="/signin"
-                data-testid="button-login-ats-crm"
-                className={`flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider px-5 h-7 rounded-full transition-all ${
-                  loginOpen
-                    ? "bg-white text-[#0d2137]"
-                    : "bg-white/95 text-[#0d2137] hover:bg-white"
-                }`}
-              >
-                <LogIn className="h-3.5 w-3.5" />
-                ATS + CRM Login
-                <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${loginOpen ? "rotate-180" : ""}`} />
+            {/* Left side: Logo & Navigation */}
+            <div className="flex items-center gap-4">
+              {/* Logo */}
+              <Link href="/" data-testid="link-home" className="flex items-center flex-shrink-0">
+                <img src={tilconsLogo} alt="Tilcons" className="h-10 md:h-12 w-auto object-contain" />
               </Link>
-              {loginOpen && (
-                <div className="absolute top-full right-0 pt-1 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                  <div className="w-80 bg-card border border-border rounded-xl shadow-2xl overflow-hidden py-2">
-                    <Link href="/signin" data-testid="link-login-ats-crm" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400">
-                        <LayoutDashboard className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Sign in to your workspace</p>
-                        <p className="text-xs text-muted-foreground">For ATS + CRM recruiters only</p>
-                      </div>
-                    </Link>
 
-                    <div className="my-1.5 border-t border-border" />
+              {/* LEFT nav: Home · About · Contact · Salary Guide */}
+              <nav className="hidden md:flex items-center gap-2 ml-4">
+              
+                  {/* HOME */}
+                  <Link href="/">
+                    <button data-testid="button-nav-home" className="flex items-center gap-1 text-sm font-bold uppercase tracking-wider px-3 py-2 rounded-md transition-colors text-foreground/70 hover:text-primary">
+                      Home
+                    </button>
+                  </Link>
 
-                    <Link href="/get-started" data-testid="link-login-demo" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                        <Handshake className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Don't have an account?</p>
-                        <p className="text-xs text-muted-foreground">Reach our team for a demo →</p>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Main header bar ── */}
-      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center gap-4">
-
-            {/* Logo (integrated into the navbar) */}
-            <Link href="/" data-testid="link-home" className="flex items-center flex-shrink-0">
-              <img src={tilconsLogo} alt="Tilcons" className="h-10 md:h-12 w-auto object-contain" />
-            </Link>
-
-            {/* LEFT nav: Home · About · Contact · Salary Guide */}
-            <nav className="hidden md:flex items-center gap-2 ml-4">
-            
-                {/* HOME */}
-                <Link href="/">
-                  <button data-testid="button-nav-home" className="flex items-center gap-1 text-sm font-bold uppercase tracking-wider px-3 py-2 rounded-md transition-colors text-foreground/70 hover:text-primary">
-                    Home
-                  </button>
-                </Link>
-
-                {/* ABOUT mega-menu (Company + Product) */}
-                <div className="relative" {...makeHover(setNavCompanyOpen, navCompanyTimeoutRef)}>
-                  <button data-testid="button-nav-company" className={`flex items-center gap-1 text-sm font-bold uppercase tracking-wider px-3 py-2 rounded-md transition-colors ${navCompanyOpen ? "text-primary" : "text-foreground/70 hover:text-primary"}`}>
-                    About
-                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${navCompanyOpen ? "rotate-180" : ""}`} />
-                  </button>
-                  {navCompanyOpen && (
+                  {/* ABOUT mega-menu (Company + Product) */}
+                  <div className="relative" {...makeHover(setNavCompanyOpen, navCompanyTimeoutRef)}>
+                    <button data-testid="button-nav-company" className={`flex items-center gap-1 text-sm font-bold uppercase tracking-wider px-3 py-2 rounded-md transition-colors ${navCompanyOpen ? "text-primary" : "text-foreground/70 hover:text-primary"}`}>
+                      About
+                      <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${navCompanyOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    {navCompanyOpen && (
+                      
                     <div className="absolute top-full left-0 pt-1 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
                       <div className="w-[860px] max-w-[calc(100vw-2rem)] bg-card border border-border rounded-xl shadow-2xl overflow-hidden">
                         <div className="p-6 grid grid-cols-4 gap-6">
@@ -336,34 +146,225 @@ export default function Header() {
 
                       </div>
                     </div>
+                  
+                    )}
+                  </div>
+
+                  <Link href="/contact" data-testid="link-nav-contact" className="text-sm font-bold uppercase tracking-wider text-foreground/70 hover:text-primary px-3 py-2 rounded-md transition-colors">Contact</Link>
+
+                  <Link href="/salary-guide" data-testid="link-nav-salary-guide" className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-foreground border border-border bg-card hover:border-primary hover:text-primary px-3 py-1.5 rounded-md transition-colors ml-1">
+                    <IndianRupee className="h-3.5 w-3.5" />
+                    Salary Guide
+                  </Link>
+              </nav>
+            </div>
+
+            {/* Right side: Actions & Mobile Hamburger */}
+            <div className="flex items-center gap-2">
+              
+              {/* Desktop Actions */}
+              <div className="hidden lg:flex items-center gap-2">
+                {/* I'm a Candidate */}
+                <div
+                  className="relative flex items-center h-16"
+                  onMouseEnter={handleJobSeekersEnter}
+                  onMouseLeave={handleJobSeekersLeave}
+                >
+                  <button
+                    className={`flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider px-4 h-8 rounded-full transition-all ${
+                      jobSeekersOpen
+                        ? "bg-sky-400 text-white"
+                        : "bg-sky-500 text-white hover:bg-sky-600"
+                    }`}
+                    data-testid="button-job-seekers-menu"
+                  >
+                    <User className="h-3.5 w-3.5" />
+                    I'm a Candidate
+                    <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${jobSeekersOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {jobSeekersOpen && (
+                    
+                <div className="absolute top-[calc(100%-10px)] right-0 pt-1 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                  <div className="w-72 bg-card border border-border rounded-xl shadow-2xl overflow-hidden py-2">
+                    <Link href="/jobs" data-testid="link-browse-jobs" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <Search className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Search Jobs</p>
+                        <p className="text-xs text-muted-foreground">Find your next opportunity</p>
+                      </div>
+                    </Link>
+                    <Link href="/submit-cv" data-testid="link-submit-cv-new" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Submit CV</p>
+                        <p className="text-xs text-muted-foreground">Let recruiters find you</p>
+                      </div>
+                    </Link>
+                    <Link href="/career-advice" data-testid="link-career-advice" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <Lightbulb className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Career Advice</p>
+                        <p className="text-xs text-muted-foreground">Expert tips for your journey</p>
+                      </div>
+                    </Link>
+
+                    <div className="my-1.5 border-t border-border" />
+
+                    <Link href="/jobseeker-auth" data-testid="link-candidate-login" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400">
+                        <LogIn className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Login / Register Free</p>
+                        <p className="text-xs text-muted-foreground">Access or create your candidate account</p>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              
                   )}
                 </div>
 
-                <Link href="/contact" data-testid="link-nav-contact" className="text-sm font-bold uppercase tracking-wider text-foreground/70 hover:text-primary px-3 py-2 rounded-md transition-colors">Contact</Link>
+                {/* I'm an Employer */}
+                <div
+                  className="relative flex items-center h-16"
+                  onMouseEnter={handleEmployersEnter}
+                  onMouseLeave={handleEmployersLeave}
+                >
+                  <button
+                    className={`flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider px-4 h-8 rounded-full border transition-all ${
+                      employersOpen
+                        ? "bg-muted border-border text-foreground"
+                        : "border-border text-foreground/80 hover:bg-muted hover:text-foreground"
+                    }`}
+                    data-testid="button-employers-menu"
+                  >
+                    <Building2 className="h-3.5 w-3.5" />
+                    I'm an Employer
+                    <span className="ml-1 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide rounded-sm bg-emerald-500 text-white leading-none">NEW</span>
+                    <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${employersOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {employersOpen && (
+                    
+                <div className="absolute top-[calc(100%-10px)] right-0 pt-1 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                  <div className="w-80 bg-card border border-border rounded-xl shadow-2xl overflow-hidden py-2">
+                    <Link href="/employers" data-testid="link-our-services" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <ShieldCheck className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Our Services</p>
+                        <p className="text-xs text-muted-foreground">Scalable staffing solutions</p>
+                      </div>
+                    </Link>
+                    <Link href="/upload-job-description" data-testid="link-post-job" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Upload Job Description</p>
+                        <p className="text-xs text-muted-foreground">Hire top talent fast</p>
+                      </div>
+                    </Link>
+                    <Link href="/industries" data-testid="link-industries-we-serve" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <Globe className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Industries We Serve</p>
+                        <p className="text-xs text-muted-foreground">Expertise across sectors</p>
+                      </div>
+                    </Link>
 
-                <Link href="/salary-guide" data-testid="link-nav-salary-guide" className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-foreground border border-border bg-card hover:border-primary hover:text-primary px-3 py-1.5 rounded-md transition-colors ml-1">
-                  <IndianRupee className="h-3.5 w-3.5" />
-                  Salary Guide
-                </Link>
+                    <div className="my-1.5 border-t border-border" />
 
-              </nav>
+                    <Link href="/vendor-registration" data-testid="link-become-partner" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <Handshake className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Become a Partner</p>
+                        <p className="text-xs text-muted-foreground">Vendor partnership program</p>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              
+                  )}
+                </div>
 
-              {/* Right side: mobile hamburger only (employer actions moved into the "I'm an Employer" ribbon menu) */}
-              <div className="flex items-center gap-1 ml-auto">
+                {/* ATS + CRM Login */}
+                <div
+                  className="relative flex items-center h-16"
+                  onMouseEnter={() => { if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current); setLoginOpen(true); }}
+                  onMouseLeave={() => { loginTimeoutRef.current = setTimeout(() => setLoginOpen(false), 150); }}
+                >
+                  <Link
+                    href="/signin"
+                    data-testid="button-login-ats-crm"
+                    className={`flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider px-4 h-8 rounded-full transition-all ${
+                      loginOpen
+                        ? "bg-primary/90 text-primary-foreground"
+                        : "bg-primary text-primary-foreground hover:bg-primary/90"
+                    }`}
+                  >
+                    <LogIn className="h-3.5 w-3.5" />
+                    ATS + CRM Login
+                    <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${loginOpen ? "rotate-180" : ""}`} />
+                  </Link>
+                  {loginOpen && (
+                    
+                <div className="absolute top-[calc(100%-10px)] right-0 pt-1 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                  <div className="w-80 bg-card border border-border rounded-xl shadow-2xl overflow-hidden py-2">
+                    <Link href="/signin" data-testid="link-login-ats-crm" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400">
+                        <LayoutDashboard className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Sign in to your workspace</p>
+                        <p className="text-xs text-muted-foreground">For ATS + CRM recruiters only</p>
+                      </div>
+                    </Link>
+
+                    <div className="my-1.5 border-t border-border" />
+
+                    <Link href="/get-started" data-testid="link-login-demo" className="flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                        <Handshake className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Don't have an account?</p>
+                        <p className="text-xs text-muted-foreground">Reach our team for a demo →</p>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              
+                  )}
+                </div>
+              </div>
 
               {/* Mobile hamburger */}
               <button
-                className="md:hidden p-2 text-foreground/70 hover:text-primary transition-colors"
+                className="lg:hidden p-2 text-foreground/70 hover:text-primary transition-colors"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 data-testid="button-mobile-menu"
               >
                 {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
             </div>
+
           </div>
 
           {/* Mobile menu */}
           {mobileMenuOpen && (
+            
             <div className="md:hidden pb-8 animate-in slide-in-from-top duration-300 border-t mt-2">
               <nav className="flex flex-col gap-6 mt-4 px-2">
                 <div className="space-y-3">
@@ -399,10 +400,10 @@ export default function Header() {
                 </div>
               </nav>
             </div>
+          
           )}
         </div>
       </div>
-
     </header>
   );
 }
