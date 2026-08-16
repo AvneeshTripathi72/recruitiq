@@ -470,6 +470,15 @@ export default function Home() {
         <StatsSection />
         <RecentJobs />
         <ContactCTA />
+
+        {/* User-requested Test Button */}
+        <section className="py-12 bg-muted/30 border-t flex justify-center items-center">
+          <Link href="/signin">
+            <button className="bg-primary text-primary-foreground font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
+              Test (Register as Recruiter)
+            </button>
+          </Link>
+        </section>
       </main>
       <Footer />
     </div>

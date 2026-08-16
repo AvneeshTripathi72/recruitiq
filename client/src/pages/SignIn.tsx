@@ -70,6 +70,8 @@ type TrialState = {
   jobTitle: string;
   industry: string;
   teamSize: string;
+  password?: string;
+  confirmPassword?: string;
 };
 
 const EMPTY_TRIAL: TrialState = {
@@ -80,6 +82,8 @@ const EMPTY_TRIAL: TrialState = {
   jobTitle: "",
   industry: "",
   teamSize: "",
+  password: "",
+  confirmPassword: "",
 };
 
 export default function SignIn() {
@@ -140,50 +144,55 @@ export default function SignIn() {
   const [trial, setTrial] = useState<TrialState>(EMPTY_TRIAL);
   const [agree, setAgree] = useState(false);
   const [trialDone, setTrialDone] = useState(false);
+  const [signUpStep, setSignUpStep] = useState<1 | 2>(1);
 
   const trialMutation = useMutation({
     mutationFn: async (data: TrialState) => {
-      const messageBody = [
-        `Free trial request from Tilcons sign-in page.`,
-        ``,
-        `Name: ${data.fullName}`,
-        `Job title: ${data.jobTitle || "—"}`,
-        `Company: ${data.companyName}`,
-        `Industry: ${data.industry}`,
-        `Team size: ${data.teamSize || "—"}`,
-        `Phone: ${data.phone}`,
-        `Email: ${data.email}`,
-      ].join("\n");
-      return apiRequest("POST", "/api/contacts", {
-        name: data.fullName,
+      // Create user
+      return apiRequest("POST", "/api/register", {
+        username: data.email, // using email as username
+        password: data.password || "temp123", 
         email: data.email,
-        phone: data.phone,
-        company: data.companyName,
-        inquiryType: "Demo Request",
-        message: messageBody,
+        fullName: data.fullName,
+        role: "recruiter",
+        companyId: data.companyName, 
       });
     },
     onSuccess: () => {
       setTrialDone(true);
-      toast({ title: "Request received", description: "Our team will reach out shortly." });
+      toast({ title: "Registration successful", description: "Please check your email to verify your account." });
     },
     onError: (err: any) => {
-      toast({ title: "Could not submit", description: err?.message ?? "Please try again.", variant: "destructive" });
+      toast({ title: "Registration failed", description: err?.message ?? "Please try again.", variant: "destructive" });
     },
   });
 
   const handleTrialSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (trialMutation.isPending) return;
-    if (!trial.fullName.trim() || !trial.companyName.trim() || !trial.email.trim() || !trial.phone.trim() || !trial.industry) {
-      toast({ title: "Missing fields", description: "Please complete all required fields.", variant: "destructive" });
+
+    if (signUpStep === 1) {
+      if (!trial.fullName.trim() || !trial.companyName.trim() || !trial.phone.trim() || !trial.industry) {
+        toast({ title: "Missing fields", description: "Please complete all required fields.", variant: "destructive" });
+        return;
+      }
+      setSignUpStep(2);
+      return;
+    }
+
+    if (!trial.email.trim() || !trial.password) {
+      toast({ title: "Missing fields", description: "Email and password are required.", variant: "destructive" });
+      return;
+    }
+    if (trial.password !== trial.confirmPassword) {
+      toast({ title: "Passwords don't match", description: "Please ensure both passwords are the same.", variant: "destructive" });
       return;
     }
     if (!agree) {
       toast({ title: "Please accept the terms", variant: "destructive" });
       return;
     }
-    trialMutation.mutate({ ...trial, fullName: trial.fullName.trim(), email: trial.email.trim(), companyName: trial.companyName.trim(), phone: trial.phone.trim() });
+    trialMutation.mutate(trial);
   };
 
   const ssoToast = (provider: string) =>
@@ -413,52 +422,77 @@ export default function SignIn() {
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleTrialSubmit} className="space-y-3" data-testid="form-trial">
-              <div className="space-y-1.5">
-                <Label htmlFor="t-name" className="text-xs font-bold">Full Name *</Label>
-                <Input id="t-name" value={trial.fullName} onChange={(e) => setTrial({ ...trial, fullName: e.target.value })} placeholder="Priya Sharma" data-testid="input-trial-name" required />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="t-company" className="text-xs font-bold">Company Name *</Label>
-                <Input id="t-company" value={trial.companyName} onChange={(e) => setTrial({ ...trial, companyName: e.target.value })} placeholder="Acme Staffing Pvt. Ltd." data-testid="input-trial-company" required />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="t-email" className="text-xs font-bold">Work Email *</Label>
-                  <Input id="t-email" type="email" value={trial.email} onChange={(e) => setTrial({ ...trial, email: e.target.value })} placeholder="priya@acme.com" data-testid="input-trial-email" required />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="t-phone" className="text-xs font-bold">Phone *</Label>
-                  <Input id="t-phone" type="tel" value={trial.phone} onChange={(e) => setTrial({ ...trial, phone: e.target.value })} placeholder="+91 98765 43210" data-testid="input-trial-phone" required />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="t-jobtitle" className="text-xs font-bold">Job Title</Label>
-                <Input id="t-jobtitle" value={trial.jobTitle} onChange={(e) => setTrial({ ...trial, jobTitle: e.target.value })} placeholder="Talent Acquisition Lead" data-testid="input-trial-jobtitle" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="t-industry" className="text-xs font-bold">Industry *</Label>
-                  <Select value={trial.industry} onValueChange={(v) => setTrial({ ...trial, industry: v })}>
-                    <SelectTrigger id="t-industry" data-testid="select-trial-industry"><SelectValue placeholder="Select" /></SelectTrigger>
-                    <SelectContent>{INDUSTRIES.map((i) => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="t-teamsize" className="text-xs font-bold">Team Size</Label>
-                  <Select value={trial.teamSize} onValueChange={(v) => setTrial({ ...trial, teamSize: v })}>
-                    <SelectTrigger id="t-teamsize" data-testid="select-trial-teamsize"><SelectValue placeholder="Select" /></SelectTrigger>
-                    <SelectContent>{TEAM_SIZES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <label className="flex items-start gap-2 text-xs text-muted-foreground pt-1 cursor-pointer">
-                <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5" data-testid="checkbox-trial-agree" />
-                <span>By registering you accept the <Link href="/terms" className="font-bold hover:underline" style={{ color: SKY }}>Terms and Conditions</Link>.</span>
-              </label>
-              <Button type="submit" size="lg" className="w-full text-white font-bold uppercase tracking-wider text-sm" style={{ background: NAVY }} disabled={trialMutation.isPending} data-testid="button-submit-trial">
-                {trialMutation.isPending ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending…</>) : (<>Try It Free <ArrowRight className="ml-2 h-4 w-4" /></>)}
-              </Button>
+            <form onSubmit={handleTrialSubmit} className="space-y-4" data-testid="form-trial">
+              {signUpStep === 1 ? (
+                <>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="t-name" className="text-xs font-bold">Full Name *</Label>
+                    <Input id="t-name" value={trial.fullName} onChange={(e) => setTrial({ ...trial, fullName: e.target.value })} placeholder="Priya Sharma" data-testid="input-trial-name" required />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="t-company" className="text-xs font-bold">Company Name *</Label>
+                    <Input id="t-company" value={trial.companyName} onChange={(e) => setTrial({ ...trial, companyName: e.target.value })} placeholder="Acme Staffing Pvt. Ltd." data-testid="input-trial-company" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="t-phone" className="text-xs font-bold">Phone *</Label>
+                      <Input id="t-phone" type="tel" value={trial.phone} onChange={(e) => setTrial({ ...trial, phone: e.target.value })} placeholder="+91 98765 43210" data-testid="input-trial-phone" required />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="t-jobtitle" className="text-xs font-bold">Job Title</Label>
+                      <Input id="t-jobtitle" value={trial.jobTitle} onChange={(e) => setTrial({ ...trial, jobTitle: e.target.value })} placeholder="Talent Acquisition Lead" data-testid="input-trial-jobtitle" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="t-industry" className="text-xs font-bold">Industry *</Label>
+                      <Select value={trial.industry} onValueChange={(v) => setTrial({ ...trial, industry: v })}>
+                        <SelectTrigger id="t-industry" data-testid="select-trial-industry"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>{INDUSTRIES.map((i) => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="t-teamsize" className="text-xs font-bold">Team Size</Label>
+                      <Select value={trial.teamSize} onValueChange={(v) => setTrial({ ...trial, teamSize: v })}>
+                        <SelectTrigger id="t-teamsize" data-testid="select-trial-teamsize"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>{TEAM_SIZES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <Button type="submit" size="lg" className="w-full text-white font-bold uppercase tracking-wider text-sm mt-4" style={{ background: NAVY }} data-testid="button-next-step">
+                    Next Step <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="t-email" className="text-xs font-bold">Work Email *</Label>
+                    <Input id="t-email" type="email" value={trial.email} onChange={(e) => setTrial({ ...trial, email: e.target.value })} placeholder="priya@acme.com" data-testid="input-trial-email" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="t-password" className="text-xs font-bold">Password *</Label>
+                      <Input id="t-password" type="password" value={trial.password} onChange={(e) => setTrial({ ...trial, password: e.target.value })} placeholder="••••••••" data-testid="input-trial-password" required />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="t-confirmpassword" className="text-xs font-bold">Confirm Password *</Label>
+                      <Input id="t-confirmpassword" type="password" value={trial.confirmPassword} onChange={(e) => setTrial({ ...trial, confirmPassword: e.target.value })} placeholder="••••••••" data-testid="input-trial-confirmpassword" required />
+                    </div>
+                  </div>
+                  <label className="flex items-start gap-2 text-xs text-muted-foreground pt-1 cursor-pointer">
+                    <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5" data-testid="checkbox-trial-agree" />
+                    <span>By registering you accept the <Link href="/terms" className="font-bold hover:underline" style={{ color: SKY }}>Terms and Conditions</Link>.</span>
+                  </label>
+                  <div className="flex items-center gap-3 mt-4">
+                    <Button type="button" variant="outline" size="lg" className="flex-1 font-bold uppercase tracking-wider text-sm" onClick={() => setSignUpStep(1)} disabled={trialMutation.isPending}>
+                      Back
+                    </Button>
+                    <Button type="submit" size="lg" className="flex-1 text-white font-bold uppercase tracking-wider text-sm" style={{ background: NAVY }} disabled={trialMutation.isPending} data-testid="button-submit-trial">
+                      {trialMutation.isPending ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting…</>) : (<>Create Account</>)}
+                    </Button>
+                  </div>
+                </>
+              )}
             </form>
           )}
         </div>

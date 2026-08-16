@@ -34,10 +34,13 @@ import { ProtectedRoute } from "@/lib/protected-route";
 import AgastyaChat from "@/components/AgastyaChat";
 import SuperAdmin from "@/pages/SuperAdmin";
 
+import VerifyEmail from "@/pages/VerifyEmail";
+
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/verify" component={VerifyEmail} />
       <Route path="/jobs" component={Jobs} />
       <Route path="/submit-cv"><Redirect to="/submit-resume" /></Route>
       <Route path="/submit-resume" component={SubmitResume} />

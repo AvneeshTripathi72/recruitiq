@@ -92,6 +92,9 @@ export function setupAuth(app: Express) {
       if (!user || !(await comparePasswords(password, user.password))) {
         return done(null, false);
       }
+      if (!user.isVerified) {
+        return done(null, false, { message: "unverified" });
+      }
       if (!user.isActive) {
         return done(null, false);
       }
@@ -105,20 +108,67 @@ export function setupAuth(app: Express) {
     done(null, user || null);
   });
 
-  app.post("/api/register", async (_req, res) => {
-    return res.status(403).json({
-      error: "Registration disabled",
-      message: "New account registration is not available. Please contact the administrator.",
-    });
+  app.post("/api/register", async (req, res, next) => {
+    try {
+      const data = insertUserSchema.parse(req.body);
+      const existing = await storage.getUserByUsername(data.username);
+      if (existing) {
+        return res.status(400).json({ error: "Username already exists" });
+      }
+
+      const hashedPassword = await hashPassword(data.password);
+      const verificationToken = randomBytes(32).toString("hex");
+
+      const user = await storage.createUser({
+        ...data,
+        password: hashedPassword,
+        isActive: true, // Will be activated via email verification
+        isVerified: false,
+        verificationToken,
+      });
+
+      // Simple email simulation or real email if SMTP is configured
+      const verifyLink = `${process.env.APP_URL || "http://localhost:5000"}/verify?token=${verificationToken}`;
+      console.log(`\n=========================================\n[EMAIL MOCK] To: ${data.email || data.username}\nSubject: Verify your Tilcons account\nBody: Please verify your account by clicking: ${verifyLink}\n=========================================\n`);
+
+      res.status(201).json({ message: "Registration successful. Please check your email to verify your account." });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ error: "Validation failed", details: error.errors });
+      }
+      next(error);
+    }
+  });
+
+  app.get("/api/verify", async (req, res) => {
+    const { token } = req.query;
+    if (!token || typeof token !== "string") {
+      return res.status(400).json({ error: "Invalid token" });
+    }
+
+    const [user] = await db.select().from(users).where(eq(users.verificationToken, token));
+    if (!user) {
+      return res.status(400).json({ error: "Invalid or expired verification link" });
+    }
+
+    await db.update(users).set({ isVerified: true, verificationToken: null }).where(eq(users.id, user.id));
+
+    res.status(200).json({ message: "Account verified successfully" });
   });
 
   app.post("/api/login", (req, res, next) => {
     try {
       const validatedData = loginSchema.parse(req.body);
 
-      passport.authenticate("local", (err: any, user: SelectUser | false) => {
+      passport.authenticate("local", (err: any, user: SelectUser | false, info?: { message: string }) => {
         if (err) return next(err);
         if (!user) {
+          if (info?.message === "unverified") {
+            return res.status(401).json({
+              error: "Account not verified",
+              message: "Please check your email and verify your account before logging in.",
+            });
+          }
           return res.status(401).json({
             error: "Authentication failed",
             message: "Invalid username or password. Please try again.",

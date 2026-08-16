@@ -76,6 +76,8 @@ export const users = pgTable("users", {
   email: text("email"),
   fullName: text("full_name"),
   isActive: boolean("is_active").notNull().default(true),
+  isVerified: boolean("is_verified").notNull().default(false),
+  verificationToken: text("verification_token"),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
