@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Link } from "wouter";
 import { Menu, X, ChevronDown, LogIn, User, ShieldCheck, Building2, FileText, Lightbulb, Globe, Handshake, Search, LayoutDashboard, IndianRupee } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import tilconsLogo from "@assets/Top_Logo_Tilcons_SkyBlue.png";
+import tilconsLogo from "@assets/logo.webp";
 import aboutMenuImage from "@assets/generated_images/Hero_office_collaboration_scene_5a689ad5.png";
 
 export default function Header() {

@@ -15,11 +15,17 @@ export default defineConfig({
       "@assets": path.resolve(rootDir, "attached_assets"),
     },
   },
-  root: path.resolve(rootDir, "client"),
+  root: rootDir,
   build: {
     outDir: path.resolve(rootDir, "dist/public"),
     emptyOutDir: true,
     target: "esnext",
+    rollupOptions: {
+      input: {
+        admin: path.resolve(rootDir, "admin", "index.html"),
+        candidate: path.resolve(rootDir, "candidate", "index.html"),
+      }
+    }
   },
   server: {
     fs: {

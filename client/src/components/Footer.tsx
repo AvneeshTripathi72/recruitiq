@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Facebook, Linkedin, BrainCircuit } from "lucide-react";
-import tilconsLogo from "@assets/Top_Logo_Tilcons_SkyBlue.png";
+import tilconsLogo from "@assets/logo.webp";
 
 export default function Footer() {
   return (

@@ -1,5 +1,5 @@
 // Based on blueprint:javascript_auth_all_persistance
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useMemo } from "react";
 import {
   useQuery,
   useMutation,
@@ -98,17 +98,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const contextValue = useMemo(() => ({
+    user: user ?? null,
+    isLoading,
+    error,
+    loginMutation,
+    logoutMutation,
+    registerMutation,
+  }), [user, isLoading, error, loginMutation, logoutMutation, registerMutation]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        user: user ?? null,
-        isLoading,
-        error,
-        loginMutation,
-        logoutMutation,
-        registerMutation,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

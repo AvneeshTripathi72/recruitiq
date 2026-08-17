@@ -45,17 +45,22 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
+      // Determine if we are serving the admin or candidate app
+      const appName = url.startsWith("/admin") ? "admin" : "candidate";
+      
       const clientTemplate = path.resolve(
         process.cwd(),
-        "client",
+        appName,
         "index.html",
       );
 
       // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
+      
+      // Update the main.tsx reference to include the app name folder
       template = template.replace(
         `src="/src/main.tsx"`,
-        `src="/src/main.tsx?v=${nanoid()}"`,
+        `src="/${appName}/src/main.tsx?v=${nanoid()}"`,
       );
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
