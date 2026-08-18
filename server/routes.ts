@@ -14,6 +14,7 @@ import { scrypt, randomBytes, timingSafeEqual, createHash } from "crypto";
 import { promisify } from "util";
 import session from "express-session";
 import { rateLimit } from "./rateLimit";
+import { uploadFileToR2, generateUniqueFilename } from "./r2";
 
 // Allowed mime types for resume / CV uploads
 const ALLOWED_RESUME_MIME = new Set([
@@ -128,6 +129,36 @@ function validateResumeBase64(value: unknown): string | null {
 }
 
 // Reusable rate limiters (in-memory, per-IP, fixed window)
+
+/**
+ * Helper to upload a base64 string to Cloudflare R2
+ */
+async function processBase64Upload(base64: string, prefix: string): Promise<string> {
+  if (/^https:\/\//i.test(base64)) return base64; // Already a URL
+  
+  const cleaned = base64.replace(/\s+/g, "");
+  const buffer = Buffer.from(cleaned, "base64");
+  const type = sniffResumeType(buffer);
+  let ext = ".bin";
+  let contentType = "application/octet-stream";
+  if (type === "pdf") { ext = ".pdf"; contentType = "application/pdf"; }
+  else if (type === "doc") { ext = ".doc"; contentType = "application/msword"; }
+  else if (type === "docx") { ext = ".docx"; contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; }
+  
+  const filename = generateUniqueFilename(`upload${ext}`, prefix);
+  return await uploadFileToR2(buffer, filename, contentType);
+}
+
+/**
+ * Helper to upload a structured resumeFile object to Cloudflare R2
+ */
+async function processResumeFile(resumeFile: any, prefix: string): Promise<string> {
+  const cleaned = resumeFile.data.replace(/\s+/g, "");
+  const buffer = Buffer.from(cleaned, "base64");
+  const filename = generateUniqueFilename(resumeFile.filename, prefix);
+  return await uploadFileToR2(buffer, filename, resumeFile.contentType);
+}
+
 const contactLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 10, key: "contacts" });
 const resumeLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 10, key: "resumes" });
 const applicationLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 20, key: "applications" });
@@ -269,13 +300,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (fileError) {
         return res.status(400).json({ error: fileError });
       }
+      
+      let finalResumeUrl = null;
+      if (req.body?.resumeFile) {
+        finalResumeUrl = await processResumeFile(req.body.resumeFile, "applications");
+      } else if (req.body?.resumeUrl) {
+        finalResumeUrl = await processBase64Upload(req.body.resumeUrl, "applications");
+      }
+
       const data = insertApplicationSchema.parse({
         jobId: req.body.jobId,
         jobTitle: req.body.jobTitle,
         applicantName: req.body.applicantName,
         email: req.body.email,
         phone: req.body.phone,
-        resumeUrl: req.body.resumeUrl,
+        resumeUrl: finalResumeUrl || undefined,
         coverLetter: req.body.coverLetter,
       });
 

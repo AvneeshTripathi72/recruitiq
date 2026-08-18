@@ -13,6 +13,8 @@ export default defineConfig({
       "@": path.resolve(rootDir, "client", "src"),
       "@shared": path.resolve(rootDir, "shared"),
       "@assets": path.resolve(rootDir, "attached_assets"),
+      "@admin": path.resolve(rootDir, "admin", "src"),
+      "@candidate": path.resolve(rootDir, "candidate", "src"),
     },
   },
   root: rootDir,
